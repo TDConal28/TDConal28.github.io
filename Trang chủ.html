@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trang chủ</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+      padding: 20px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      position: absolute;
+      top: 0;
+      z-index: 10;
+    }
+
+    header .logo { font-weight: bold; font-size: 20px; }
+
+    header nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    header nav a:hover { color: #0a84ff; }
+
+    /* ========== HERO SLIDER ========== */
+    .hero {
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #0a84ff 0%, #000 70%);
+    }
+
+    .slider {
+      display: flex;
+      height: 100%;
+      transition: transform 0.8s ease-in-out;
+      gap: 10px;
+    }
+
+    .slide {
+      flex: 0 0 100%;
+      text-align: center;
+      padding: 120px 20px 40px;
+    }
+
+    .slide h1 { font-size: 50px; margin-bottom: 10px; }
+
+    .slide h2 {
+      font-size: 28px;
+      color: #b0c9ff;
+      margin-bottom: 30px;
+    }
+
+    .product {
+      position: relative;
+      width: 700px;
+      max-width: 90%;
+      margin: 0 auto;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      height: 400px;
+    }
+
+    .product img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 20px;
+      box-shadow: 0 0 80px rgba(0, 174, 255, 0.6);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    .product:hover img {
+      transform: scale(1.05);
+      box-shadow: 0 0 100px rgba(255, 255, 255, 0.8);
+    }
+
+    /* Overlay nút */
+    .product-overlay {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      z-index: 2;
+    }
+
+    .product-overlay a {
+      text-decoration: none;
+      padding: 10px 20px;
+      border: 1px solid white;
+      border-radius: 20px;
+      font-weight: bold;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .product-overlay a:hover { background: white; color: black; }
+
+    /* Nút điều hướng slider */
+    .nav-buttons {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+      padding: 0 20px;
+    }
+
+    .nav-buttons button {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      padding: 10px 18px;
+      border-radius: 50%;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .nav-buttons button:hover { background: rgba(255, 255, 255, 0.5); }
+
+    /* ========== PRODUCT HERO (mới) ========== */
+    .product-hero {
+      text-align: center;
+      padding: 120px 20px 60px;
+      background: #000;
+    }
+
+    .product-hero h1 { font-size: 44px; margin-bottom: 10px; }
+    .product-hero h2 { font-size: 22px; color: #b0c9ff; margin-bottom: 40px; }
+
+    .product-hero .hero-image {
+      width: 600px;
+      max-width: 90%;
+      margin: 0 auto;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 0 60px rgba(0, 174, 255, 0.4);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .product-hero .hero-image img { width: 100%; display: block; border-radius: 20px; }
+    .product-hero .hero-image:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 100px rgba(255, 255, 255, 0.7);
+    }
+
+    /* ========== GRID SẢN PHẨM PHÍA DƯỚI ========== */
+    .catalogue { padding: 60px 40px; background: #111; }
+
+    .catalogue h2 { font-size: 32px; margin-bottom: 30px; text-align: center; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+
+    .grid-item {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #111; /* subtle bg so overlay is clear */
+      min-height: 260px;
+    }
+
+    /* fixed-size image + cover to avoid distortion */
+    .grid-item img {
+      width: 100%;
+      height: 260px;     /* fixed height for uniform grid */
+      object-fit: cover; /* keep aspect ratio, crop if needed */
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .grid-item:hover img { transform: scale(1.05); }
+
+    /* ====== NEW: description overlay (top-left) ====== */
+    .grid-desc {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      right: 20px;
+      z-index: 3;
+      background: linear-gradient(180deg, rgba(0,0,0,0.5), rgba(0,0,0,0.20));
+      padding: 12px 14px;
+      border-radius: 12px;
+      backdrop-filter: blur(4px);
+    }
+
+    .grid-desc h3 {
+		text-align: center;
+      font-size: 18px;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .grid-desc p {
+		text-align: center;
+      font-size: 13px;
+      color: #EEEEEE;
+      line-height: 1.2;
+    }
+
+    /* bottom overlay buttons (kept) */
+    .grid-overlay {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .grid-overlay a {
+      text-decoration: none;
+      padding: 8px 18px;
+      border: 1px solid white;
+      border-radius: 20px;
+      font-weight: bold;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .grid-overlay a:hover { background: white; color: black; }
+
+    footer {
+      padding: 20px;
+      font-size: 12px;
+      text-align: center;
+      opacity: 0.7;
+      background: #000;
+    }
+
+    /* responsive tweaks */
+    @media (max-width: 900px) {
+      .product { height: 320px; }
+      .product img { height: 320px; }
+      .grid-item img { height: 220px; }
+      .product-hero .hero-image { width: 90%; }
+      .slide h1 { font-size: 36px; }
+    }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      header { padding: 14px 20px; }
+      .slide { padding-top: 100px; }
+    }
+	  /* --- Container chính --- */
+.color-container {
+  position: relative;
+  width: 600px;
+  max-width: 90%;
+  margin: 0 auto;
+  height: 400px;
+  overflow: visible; /* Cho phép ảnh mở rộng ra ngoài */
+}
+
+/* Ảnh chính ban đầu */
+.color-container .main-phone {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+  transition: transform 0.8s ease, opacity 0.8s ease;
+  z-index: 2;
+  position: relative;
+}
+
+/* --- Container ảnh màu (ẩn ban đầu) --- */
+.color-variants {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw; /* ✅ toàn chiều ngang màn hình */
+  height: 450px; /* Tăng chiều cao để ảnh thoáng hơn */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  gap: 20px;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  z-index: 3;
+  padding: 0 2vw;
+}
+
+/* Style từng ảnh */
+.color-variants img {
+  flex: 1;
+  max-width: 18%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+  transform: scale(0.6);
+  transition: transform 0.8s ease;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Hiệu ứng khi hover */
+.color-container:hover .main-phone {
+  opacity: 0;
+  transform: scale(0.97);
+}
+
+
+.color-container:hover .color-variants {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.color-container:hover .color-variants img {
+  transform: scale(1);
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">SHOP</div>
+    <nav>
+      <a href="#">Di động</a> 
+      <a href="#">Phụ kiện</a>
+      <a href="#">Giỏ hàng</a>
+      <a href="#">Đăng nhập</a>
+    </nav>
+  </header>
+
+  <!-- HERO SLIDER (giữ nguyên) -->
+  <div class="hero">
+    <div class="slider" id="slider">
+      <div class="slide">
+        <h1>Huawei Pura 80 Ultra</h1>
+        <h2>Sắc nét từng chi tiết, tỏa sáng mọi góc nhìn✨</h2>
+        <div class="product" onclick="location.href='#';">
+          <img src="https://genk.mediacdn.vn/139269124445442048/2025/6/11/huawei-pura-80-ultra-1749648258289225315761-1749653849362-17496538494341377972622.jpeg" alt="Huawei Pura 80 Ultra">
+          <div class="product-overlay">
+            <a href="#">Tìm hiểu thêm</a>
+            <a href="#">Xem giá</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h1>iPhone 17 Pro</h1>
+        <h2>Sức mạnh mới của Apple 🍏</h2>
+        <div class="product" onclick="location.href='#';">
+          <img src="https://www.xtmobile.vn/vnt_upload/product/box1_1.png" alt="iPhone 17">
+          <div class="product-overlay">
+            <a href="#">Tìm hiểu thêm</a>
+            <a href="#">Xem giá</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h1>Samsung Galaxy S25 Ultra</h1>
+        <h2>Galaxy AI✨</h2>
+        <div class="product" onclick="location.href='#';">
+          <img src="https://resource.kinhtedothi.vn//2024/07/31/samsung-galaxy-s25-ultra-1024x576.jpeg" alt="Samsung Galaxy S25 Ultra">
+          <div class="product-overlay">
+            <a href="#">Tìm hiểu thêm</a>
+            <a href="#">Xem giá</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button onclick="prevSlide()">❮</button>
+      <button onclick="nextSlide()">❯</button>
+    </div>
+  </div>
+
+  <!-- PRODUCT HERO -->
+  <section class="product-hero">
+  <h1>iPhone 17</h1>
+  <h2>Đa tài, đa sắc</h2>
+
+  <div class="hero-image color-container" id="colorContainer">
+    <img class="main-phone" 
+         src="https://images2.thanhnien.vn/528068263637045248/2025/9/9/2-17574412523511037932118.jpg" 
+         alt="iPhone 17">
+
+    <div class="color-variants">
+      <img src="https://www.didongmy.com/vnt_upload/product/09_2025/thumbs/(600x600)_iphone_17_black_thumb_didongmy_1.jpg" alt="Đen">
+      <img src="https://news.khangz.com/wp-content/uploads/2025/09/iphone-17-256gb-1.jpg" alt="Trắng">
+      <img src="https://www.didongmy.com/vnt_upload/product/09_2025/thumbs/(600x600)_iphone_17_sage_thumb_didongmy_1.jpg" alt="Xanh lá">
+      <img src="https://cdn2.cellphones.com.vn/insecure/rs:fill:0:0/q:90/plain/https://cellphones.com.vn/media/wysiwyg/Phone/Apple/iPhone-17/iphone-17-256gb-3.jpg" alt="Xanh lam khói">
+      <img src="https://cdn1.viettelstore.vn/Images/Product/ProductImage/1907094116.jpeg" alt="Tím oải hương">
+    </div>
+  </div>
+</section>
+
+
+  <!-- CATALOGUE -->
+  <section class="catalogue">
+    <h2>Các sản phẩm khác</h2>
+    <div class="grid">
+      <!-- Grid item 1 -->
+      <div class="grid-item" onclick="location.href='#';">
+        <!-- description overlay -->
+        <div class="grid-desc">
+          <h3>iPhone Air</h3>
+          <p>Phiên bản Pro — Màn hình XDR, chip mới, màu sắc thời thượng.</p>
+        </div>
+
+        <img src="https://images2.thanhnien.vn/528068263637045248/2024/10/6/iphone-17-air-1728228624868-17282286256581680074632.jpg" alt="iPhone 17 Air">
+        <div class="grid-overlay">
+          <a href="#">Tìm hiểu thêm</a>
+          <a href="#">Xem giá</a>
+        </div>
+      </div>
+
+      <!-- Grid item 2 -->
+      <div class="grid-item" onclick="location.href='#';">
+        <div class="grid-desc">
+          <h3>Galaxy S25 FE</h3>
+          <p>Hiệu năng ổn định, camera sắc nét và pin dùng lâu.</p>
+        </div>
+
+        <img src="https://cdn.viettablet.com/images/news/71/samsung-galaxy-s25-fe-gia-bao-nhieu.jpg" alt="Galaxy S25 FE">
+        <div class="grid-overlay">
+          <a href="#">Tìm hiểu thêm</a>
+          <a href="#">Xem giá</a>
+        </div>
+      </div>
+
+      <!-- Grid item 3 -->
+      <div class="grid-item" onclick="location.href='#';">
+        <div class="grid-desc">
+          <h3>Google Pixel 9 Pro</h3>
+          <p>All pro. Pure magic.</p>
+        </div>
+
+        <img src="https://mobappy.co.jp/wp-content/uploads/2024/09/P9P9PThumbnail_16x9_Opt2_1.width-1000.format-webp.webp" alt="Huawei Pura 80">
+        <div class="grid-overlay">
+          <a href="#">Tìm hiểu thêm</a>
+          <a href="#">Xem giá</a>
+        </div>
+      </div>
+
+      <!-- Grid item 4 -->
+      <div class="grid-item" onclick="location.href='#';">
+        <div class="grid-desc">
+          <h3>Vivo x200 Pro</h3>
+          <p>Bản giao hưởng của đường cong và sự lấp lánh</p>
+        </div>
+        <img src="https://cdn.mobilecity.vn/mobilecity-vn/images/2024/10/vivo-x200-pro-xanh-duong.jpg.webp" alt="Vivo x200 Pro">
+        <div class="grid-overlay">
+          <a href="#">Tìm hiểu thêm</a>
+          <a href="#">Xem giá</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+	  <p> © 2025 Cửa hàng điện thoại di động cao cấp</p>
+	  <p> 
+      <a href="#">Liên hệ</a> | 
+      <a href="#">Chính sách bảo mật</a> |
+	  <a href="#">Facebook</a>
+	  </p>
+	</footer>
+
+  <script>
+    let currentIndex = 0;
+    const slider = document.getElementById("slider");
+
+    function showSlide(index) {
+      const totalSlides = slider.children.length;
+      if (index < 0) index = totalSlides - 1;
+      if (index >= totalSlides) index = 0;
+      currentIndex = index;
+      slider.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    function prevSlide() { showSlide(currentIndex - 1); }
+    function nextSlide() { showSlide(currentIndex + 1); }
+  </script>
+</body>
+</html>
